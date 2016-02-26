@@ -1,0 +1,12 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "noImplicitAny": true,
+        "target": "ES5",
+        "declaration": true,
+        "outDir": "lib"
+    },
+    "files": [
+        "src/funscene.ts"
+    ]
+}

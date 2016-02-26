@@ -1,0 +1,27 @@
+{
+    "name": "funscene",
+    "description": "2d animated scenes with WebGL",
+    "version": "0.0.1",
+    "main": "lib/funscene.js",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/KMahoney/funscene.git"
+    },
+    "author": {
+        "name": "Kevin Mahoney",
+        "url": "http://kevinmahoney.co.uk"
+    },
+    "files": [
+        "lib",
+        "README.md",
+        "LICENSE"
+    ],
+    "scripts": {
+        "prepublish": "tsc -d"
+    },
+    "typings": "./lib/funscene.d.ts",
+    "devDependencies": {
+        "typescript": "1.8.2"
+    },
+    "license": "BSD-3-Clause"
+}
