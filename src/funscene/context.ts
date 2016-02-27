@@ -188,7 +188,7 @@ export class Context {
         function loop(t: number) {
             var cont = draw(context, t);
             gl.finish();
-            if (cont) { context.raf_id = requestAnimationFrame(loop) };
+            context.raf_id = cont ? requestAnimationFrame(loop) : null;
         }
 
         this.raf_id = requestAnimationFrame(loop)
