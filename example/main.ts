@@ -1,4 +1,4 @@
-import { Texture, Sprite, Context, Scene, interpolators, transformers as t } from '../src/funscene'
+import { Texture, Sprite, Context, createScene, interpolators, transformers as t } from '../src/funscene'
 
 const canvas = <HTMLCanvasElement> document.getElementById("stage");
 const context = new Context(canvas);
@@ -109,14 +109,14 @@ function buildScene(context: Context) {
         ])
     ]);
 
-    return new Scene(world, sprites);
+    return createScene(world, sprites);
 }
 
 // Run the scene
-context.runAnimation(buildScene(context).createAnimation());
+context.runAnimation(buildScene(context));
 
 // If the context is resized we need to recreate the scene as the
 // camera won't be pointing at the middle any more
 window.addEventListener("contextResize", function () {
-    context.runAnimation(buildScene(context).createAnimation());
+    context.runAnimation(buildScene(context));
 });

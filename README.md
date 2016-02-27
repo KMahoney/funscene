@@ -21,7 +21,7 @@ A demo is running at http://kevinmahoney.co.uk/funscene/example/ (source in the 
 
 ```javascript
 
-import { Texture, Sprite, Context, Scene, interpolators, transformers as t } from 'funscene'
+import { Texture, Sprite, Context, createScene, interpolators, transformers as t } from 'funscene'
 
 var canvas = <HTMLCanvasElement> document.getElementById("stage");
 var context = new Context(canvas);
@@ -51,8 +51,7 @@ var sprites = [
         ]))
 ];
 
-var scene = new Scene(t.noOp, sprites);
-context.runAnimation(scene.createAnimation());
+context.runAnimation(createScene(t.noOp, sprites));
 
 ```
 
