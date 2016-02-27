@@ -16,13 +16,14 @@ export function createScene(world_transform: Transformer, sprites: Sprite[]): Dr
     return function(context: Context, t: number) {
         const gl = context.gl;
         const program = context.program;
+        const scene_t = t - start;
         var incomplete = false;
 
         gl.clear(gl.COLOR_BUFFER_BIT);
 
         world_properties.matrix.setOrtho(0, context.width, context.height, 0, 0, 1);
-        world_transform.updateProperties(t - start, world_properties);
-        incomplete = incomplete || (t < world_transform.length);
+        world_transform.updateProperties(scene_t, world_properties);
+        incomplete = incomplete || (scene_t < world_transform.length);
         gl.uniformMatrix4fv(program.projection, false, world_properties.matrix.array);
 
         // We currently do a series of WebGL calls for each
@@ -32,8 +33,8 @@ export function createScene(world_transform: Transformer, sprites: Sprite[]): Dr
             const texture = sprite.texture;
 
             // mutate model and blend in place
-            sprite.updateProperties(t - start, properties);
-            incomplete = incomplete || (t < sprite.length);
+            sprite.updateProperties(scene_t, properties);
+            incomplete = incomplete || (scene_t < sprite.length);
 
             // send the updated model and blend to webgl
             gl.uniform4fv(program.blend, properties.blend);
