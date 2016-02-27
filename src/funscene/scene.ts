@@ -16,7 +16,7 @@ export function createScene(world_transform: Transformer, sprites: Sprite[]): Dr
     return function(context: Context, t: number) {
         const gl = context.gl;
         const program = context.program;
-        const scene_t = t - start;
+        const scene_t = Math.max(t - start, 0);
         var incomplete = false;
 
         gl.clear(gl.COLOR_BUFFER_BIT);

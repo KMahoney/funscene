@@ -30,15 +30,15 @@ export type Interpolator = (t: number, a: number, b: number) => number;
 
 export namespace interpolators {
     export function linear(t: number, a: number, b: number): number {
-        return (b - a) * t + a;
+        return (b - a) * Math.min(t, 1) + a;
     }
 
     export function cubic(t: number, a: number, b: number): number {
-        return (b - a) * Math.pow(t, 3) + a;
+        return (b - a) * Math.pow(Math.min(t, 1), 3) + a;
     }
 
     export function inverseCubic(t: number, a: number, b: number): number {
-        return (b - a) * (1.0 - Math.pow(1.0 - t, 3)) + a;
+        return (b - a) * (1.0 - Math.pow(1.0 - Math.min(t, 1), 3)) + a;
     }
 }
 
