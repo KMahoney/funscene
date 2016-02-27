@@ -1,5 +1,4 @@
-import { Texture, Sprite, Context, Scene } from '../src/funscene'
-import { interpolators, blend, wait, combine, fade, move, translate, rotate, repeat, sequence } from '../src/funscene/transformers'
+import { Texture, Sprite, Context, Scene, interpolators, transformers as t } from '../src/funscene'
 
 const canvas = <HTMLCanvasElement> document.getElementById("stage");
 const context = new Context(canvas);
@@ -43,11 +42,11 @@ function buildScene(context: Context) {
             blue_square,
 
             // move around the edge and repeat
-            repeat([
-                move(interp, 1000, 0,0, 800,0),
-                move(interp, 1000, 800,0, 800,800),
-                move(interp, 1000, 800,800, 0,800),
-                move(interp, 1000, 0,800, 0,0),
+            t.repeat([
+                t.move(interp, 1000, 0,0, 800,0),
+                t.move(interp, 1000, 800,0, 800,800),
+                t.move(interp, 1000, 800,800, 0,800),
+                t.move(interp, 1000, 0,800, 0,0),
             ])),
     ];
 
@@ -55,24 +54,24 @@ function buildScene(context: Context) {
     for (var i = 0; i < 100; i++) {
         sprites.push(new Sprite(
             happy,
-            combine([
+            t.combine([
                 // order them in to a grid
-                translate(100 * Math.floor(i / 10), Math.floor(i % 10) * 100),
+                t.translate(100 * Math.floor(i / 10), Math.floor(i % 10) * 100),
 
-                sequence([
+                t.sequence([
                     // they take turns to...
-                    wait(i * 1000),
+                    t.wait(i * 1000),
 
-                    combine([
+                    t.combine([
                         // gradually turn red
-                        blend(interp, 6000, [1,1,1,1], [1,0,0,1]),
+                        t.blend(interp, 6000, [1,1,1,1], [1,0,0,1]),
 
                         // rotate around their middle
-                        translate(50, 50),
-                        repeat([
-                            rotate(interp, 1000, 0, 1)
+                        t.translate(50, 50),
+                        t.repeat([
+                            t.rotate(interp, 1000, 0, 1)
                         ]),
-                        translate(-50, -50),
+                        t.translate(-50, -50),
                     ])
                 ])
             ])
@@ -80,32 +79,32 @@ function buildScene(context: Context) {
     }
 
     // Fade a blue square in and out
-    sprites.push(new Sprite(blue_square, combine([
+    sprites.push(new Sprite(blue_square, t.combine([
         // Put it in the middle
-        translate(1000/2-100, 1000/2-100),
+        t.translate(1000/2-100, 1000/2-100),
 
         // fade in and out
-        repeat([
-            fade(interp, 1000, 0, 1),
-            fade(interp, 1000, 1, 0),
+        t.repeat([
+            t.fade(interp, 1000, 0, 1),
+            t.fade(interp, 1000, 1, 0),
         ])
     ])));
 
 
     // The camera
-    var world = combine([
+    var world = t.combine([
         // focus on the middle
-        translate(context.width/2-500, context.height/2-500),
+        t.translate(context.width/2-500, context.height/2-500),
 
-        repeat([
+        t.repeat([
             // wait 6 seconds
-            wait(6000),
+            t.wait(6000),
 
             // spin around the centre!
-            combine([
-                translate(500, 500),
-                rotate(interp, 3000, 0,1),
-                translate(-500, -500),
+            t.combine([
+                t.translate(500, 500),
+                t.rotate(interp, 3000, 0,1),
+                t.translate(-500, -500),
             ])
         ])
     ]);

@@ -21,8 +21,7 @@ A demo is running at http://kevinmahoney.co.uk/funscene/example/ (source in the 
 
 ```javascript
 
-import { Texture, Sprite, Context, Scene } from 'funscene'
-import { interpolators, noOp, sequence, combine, fade, move, repeat } from 'funscene/transformers'
+import { Texture, Sprite, Context, Scene, interpolators, transformers as t } from 'funscene'
 
 var canvas = <HTMLCanvasElement> document.getElementById("stage");
 var context = new Context(canvas);
@@ -38,21 +37,21 @@ hello_world.make(function (context) {
 var sprites = [
     new Sprite(
         hello_world,
-        sequence([
+        t.sequence([
             // fade in and scroll from top of the screen
-            combine([
-                fade(interpolators.linear, 3000, 0, 1),
-                move(interpolators.inverseCubic, 3000, 0,0, 0,300)
+            t.combine([
+                t.fade(interpolators.linear, 3000, 0, 1),
+                t.move(interpolators.inverseCubic, 3000, 0,0, 0,300)
             ]),
             // move left and right, repeat
-            repeat([
-                move(interpolators.inverseCubic, 3000, 0,300, 300,300),
-                move(interpolators.inverseCubic, 3000, 300,300, 0,300)
+            t.repeat([
+                t.move(interpolators.inverseCubic, 3000, 0,300, 300,300),
+                t.move(interpolators.inverseCubic, 3000, 300,300, 0,300)
             ])
         ]))
 ];
 
-var scene = new Scene(noOp, sprites);
+var scene = new Scene(t.noOp, sprites);
 context.runAnimation(scene.createAnimation());
 
 ```
