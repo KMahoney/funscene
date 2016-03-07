@@ -33,11 +33,11 @@ export namespace interpolators {
         return (b - a) * Math.min(t, 1) + a;
     }
 
-    export function cubic(t: number, a: number, b: number): number {
+    export function cubicIn(t: number, a: number, b: number): number {
         return (b - a) * Math.pow(Math.min(t, 1), 3) + a;
     }
 
-    export function inverseCubic(t: number, a: number, b: number): number {
+    export function cubicOut(t: number, a: number, b: number): number {
         return (b - a) * (1.0 - Math.pow(1.0 - Math.min(t, 1), 3)) + a;
     }
 }

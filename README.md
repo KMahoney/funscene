@@ -41,12 +41,12 @@ var sprites = [
             // fade in and scroll from top of the screen
             t.combine([
                 t.fade(interpolators.linear, 3000, 0, 1),
-                t.move(interpolators.inverseCubic, 3000, 0,0, 0,300)
+                t.move(interpolators.cubicOut, 3000, 0,0, 0,300)
             ]),
             // move left and right, repeat
             t.repeat([
-                t.move(interpolators.inverseCubic, 3000, 0,300, 300,300),
-                t.move(interpolators.inverseCubic, 3000, 300,300, 0,300)
+                t.move(interpolators.cubicOut, 3000, 0,300, 300,300),
+                t.move(interpolators.cubicOut, 3000, 300,300, 0,300)
             ])
         ]))
 ];

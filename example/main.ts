@@ -34,7 +34,7 @@ happy.make(function (context) {
 function buildScene(context: Context) {
     // Use the inverse cubic interpolator for all the animations. This
     // looks a bit like natural acceleration/friction.
-    const interp = interpolators.inverseCubic;
+    const interp = interpolators.cubicOut;
 
     // A blue square roams the perimeter
     var sprites = [
