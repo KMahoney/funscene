@@ -21,7 +21,9 @@
     },
     "typings": "./lib/funscene.d.ts",
     "devDependencies": {
-        "typescript": "1.8.2"
+        "typescript": "~1.8.2",
+        "ts-loader": "~0.8.1",
+        "webpack": "~2.1.0-beta"
     },
     "license": "BSD-3-Clause"
 }
