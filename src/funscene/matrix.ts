@@ -29,6 +29,27 @@ export class Matrix {
         m[15] = 1;
     }
 
+    copy(other: Matrix): void {
+        var m = this.array;
+        var m2 = other.array;
+        m[0] = m2[0];
+        m[1] = m2[1];
+        m[2] = m2[2];
+        m[3] = m2[3];
+        m[4] = m2[4];
+        m[5] = m2[5];
+        m[6] = m2[6];
+        m[7] = m2[7];
+        m[8] = m2[8];
+        m[9] = m2[9];
+        m[10] = m2[10];
+        m[11] = m2[11];
+        m[12] = m2[12];
+        m[13] = m2[13];
+        m[14] = m2[14];
+        m[15] = m2[15];
+    }
+
     translate(x: number, y: number, z: number): void {
         var m = this.array;
         m[12] = m[0] * x + m[4] * y + m[8] * z + m[12];

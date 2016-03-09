@@ -17,6 +17,16 @@ export class Properties {
         const b = this.blend;
         b[0] = b[1] = b[2] = b[3] = 1;
     }
+
+    copy(p: Properties): void {
+        this.matrix.copy(p.matrix);
+        var b1 = this.blend;
+        var b2 = p.blend;
+        b1[0] = b2[0];
+        b1[1] = b2[1];
+        b1[2] = b2[2];
+        b1[3] = b2[3];
+    }
 }
 
 // Use a 'null' length for constant transformers. This works as you'd

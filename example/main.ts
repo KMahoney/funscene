@@ -1,4 +1,4 @@
-import { Texture, Sprite, Context, createScene, interpolators, transformers as t } from '../src/funscene'
+import { Texture, Sprite, Group, Context, createScene, interpolators, transformers as t } from '../src/funscene'
 
 const canvas = <HTMLCanvasElement> document.getElementById("stage");
 const context = new Context(canvas);
@@ -92,7 +92,7 @@ function buildScene(context: Context) {
 
 
     // The camera
-    var world = t.combine([
+    var world_transform = t.combine([
         // focus on the middle
         t.translate(context.width/2-500, context.height/2-500),
 
@@ -109,7 +109,7 @@ function buildScene(context: Context) {
         ])
     ]);
 
-    return createScene(world, sprites);
+    return createScene([new Group(sprites, world_transform)]);
 }
 
 // Run the scene

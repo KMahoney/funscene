@@ -51,7 +51,7 @@ var sprites = [
         ]))
 ];
 
-context.runAnimation(createScene(t.noOp, sprites));
+context.runAnimation(createScene(sprites));
 
 ```
 
