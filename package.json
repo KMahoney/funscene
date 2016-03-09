@@ -1,7 +1,7 @@
 {
     "name": "funscene",
     "description": "2d animated scenes with WebGL",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "main": "lib/funscene.js",
     "repository": {
         "type": "git",
