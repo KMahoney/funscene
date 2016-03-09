@@ -165,7 +165,7 @@ export namespace transformers {
             length: seq.map(s => s.length).reduce(function (a, b) { return a + b }, 0),
             updateProperties: function(t, prop) {
                 var acc = 0;
-                for (var i = 0; i < n; i++) {
+                for (var i = 0; i < n - 1; i++) {
                     const len = seq[i].length
                     if (t < acc + len) {
                         seq[i].updateProperties(t - acc, prop);
@@ -173,6 +173,7 @@ export namespace transformers {
                     }
                     acc += len;
                 }
+                seq[n - 1].updateProperties(t - acc, prop);
             }
         };
     }
