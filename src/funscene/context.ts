@@ -148,7 +148,7 @@ export class Context {
     /**
      * Bind a texture to the current context.
      */
-    bindTexture(texture: Texture) {
+    bindTexture(texture: Texture): void {
         if (texture === this.bound_texture) { return };
         this.bound_texture = texture;
         this.gl.bindTexture(this.gl.TEXTURE_2D, texture.texture_id);
@@ -159,12 +159,12 @@ export class Context {
      * when the browser window resize and then emits a 'contextResize'
      * event on the window.
      */
-    fullscreen() {
+    fullscreen(): void {
         throttledResizeHandler(this.resize.bind(this))
         this.resize();
     }
 
-    resize() {
+    resize(): void {
         this.width = window.innerWidth;
         this.height = window.innerHeight;
         this.canvas.width = this.width;
@@ -177,7 +177,7 @@ export class Context {
      * Start an animation loop. Stops when the draw callback returns
      * false or `stopAnimation` is called.
      */
-    runAnimation(draw: DrawCallback) {
+    runAnimation(draw: DrawCallback): void {
         this.stopAnimation();
 
         // I'm not sure if .bind allocates, and we wouldn't want to do
@@ -197,7 +197,7 @@ export class Context {
     /**
      * Stop a currently active animation loop.
      */
-    stopAnimation() {
+    stopAnimation(): void {
         if (this.raf_id !== null) {
             cancelAnimationFrame(this.raf_id);
             this.raf_id = null;

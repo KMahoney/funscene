@@ -9,7 +9,7 @@ export class Matrix {
         this.setIdentity();
     }
 
-    setIdentity() {
+    setIdentity(): void {
         var m = this.array;
         m[0] = 1;
         m[1] = 0;
@@ -29,7 +29,7 @@ export class Matrix {
         m[15] = 1;
     }
 
-    translate(x: number, y: number, z: number) {
+    translate(x: number, y: number, z: number): void {
         var m = this.array;
         m[12] = m[0] * x + m[4] * y + m[8] * z + m[12];
         m[13] = m[1] * x + m[5] * y + m[9] * z + m[13];
@@ -37,7 +37,7 @@ export class Matrix {
         m[15] = m[3] * x + m[7] * y + m[11] * z + m[15];
     }
 
-    rotateZ(rad: number) {
+    rotateZ(rad: number): void {
         var m = this.array;
         const s = Math.sin(rad);
         const c = Math.cos(rad);
@@ -60,7 +60,7 @@ export class Matrix {
         m[7] = m7 * c - m3 * s;
     }
 
-    setOrtho(left: number , right: number, bottom: number, top: number, near: number, far: number) {
+    setOrtho(left: number , right: number, bottom: number, top: number, near: number, far: number): void {
         var m = this.array;
         const leftright = 1 / (left - right);
         const bottomtop = 1 / (bottom - top);

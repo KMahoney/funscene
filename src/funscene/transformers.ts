@@ -12,7 +12,7 @@ export class Properties {
         this.blend = new Float32Array([1, 1, 1, 1]);
     }
 
-    reset() {
+    reset(): void {
         this.matrix.setIdentity();
         const b = this.blend;
         b[0] = b[1] = b[2] = b[3] = 1;

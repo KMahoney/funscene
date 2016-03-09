@@ -25,7 +25,7 @@ export class Texture {
     /**
      * Draw to the texture using a canvas.
      */
-    make(callback: (context: CanvasRenderingContext2D) => void) {
+    make(callback: (context: CanvasRenderingContext2D) => void): void {
         const gl = this.gl;
         const canvas = document.createElement('canvas');
         canvas.width = this.texture_width;
