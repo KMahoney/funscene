@@ -22,20 +22,24 @@ export class Texture {
         this.texture_scale_y = this.height / this.texture_height;
     }
 
+    load(canvas: HTMLCanvasElement): void {
+        const gl = this.gl;
+        gl.bindTexture(gl.TEXTURE_2D, this.texture_id);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, canvas);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        gl.generateMipmap(gl.TEXTURE_2D);
+    }
+
     /**
      * Draw to the texture using a canvas.
      */
-    make(callback: (context: CanvasRenderingContext2D) => void): void {
-        const gl = this.gl;
+    draw(callback: (context: CanvasRenderingContext2D) => void): void {
         const canvas = document.createElement('canvas');
         canvas.width = this.texture_width;
         canvas.height = this.texture_height;
         const context = canvas.getContext('2d');
         callback(context);
-        gl.bindTexture(gl.TEXTURE_2D, this.texture_id);
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, canvas);
-        gl.generateMipmap(gl.TEXTURE_2D);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        this.load(canvas);
     }
 }

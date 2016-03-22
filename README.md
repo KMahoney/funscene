@@ -28,7 +28,7 @@ var context = new Context(canvas);
 context.fullscreen();
 
 var hello_world = context.createTexture(250, 50);
-hello_world.make(function (context) {
+hello_world.draw(function (context) {
     context.fillStyle = "rgb(200,200,200)";
     context.font = "40px sans";
     context.fillText("Hello World!",0,50);

@@ -6,14 +6,14 @@ context.fullscreen();
 
 // Make a blue square texture by drawing to a canvas context
 const blue_square = context.createTexture(200, 200);
-blue_square.make(function (context) {
+blue_square.draw(function (context) {
     context.fillStyle = "rgb(80,80,200)";
     context.fillRect(0,0, 200,200);
 });
 
 // Make a happy face texture by drawing to a canvas context
 const happy = context.createTexture(100, 100);
-happy.make(function (context) {
+happy.draw(function (context) {
     context.strokeStyle = "rgb(200,200,100)";
     context.lineWidth = 5;
     context.beginPath();
