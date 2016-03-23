@@ -7,6 +7,7 @@
         "outDir": "lib"
     },
     "files": [
+        "src/promise.d.ts",
         "src/funscene.ts"
     ]
 }

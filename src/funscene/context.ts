@@ -1,4 +1,4 @@
-import { Texture } from './texture'
+import { Texture, loadTexture } from './texture'
 
 /**
  * The GL shader program used to display 2D sprites.
@@ -143,6 +143,20 @@ export class Context {
      */
     createTexture(width: number, height: number): Texture {
         return new Texture(this.gl, width, height);
+    }
+
+    /**
+     * Load a new WebGL texture from an image
+     */
+    loadTexture(src: string): Promise<Texture> {
+        return loadTexture(this.gl, src);
+    }
+
+    /**
+     * Load multiple WebGL texture from a images
+     */
+    loadTextures(srcs: [string]): Promise<[Texture]> {
+        return Promise.all(srcs.map(src => loadTexture(this.gl, src)));
     }
 
     /**

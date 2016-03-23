@@ -5,6 +5,7 @@
         "target": "ES5"
     },
     "files": [
+        "../src/promise.d.ts",
         "main.ts"
     ]
 }

@@ -43,3 +43,17 @@ export class Texture {
         this.load(canvas);
     }
 }
+
+export function loadTexture(gl: WebGLRenderingContext, src: string): Promise<Texture> {
+    return new Promise(function (resolve, reject) {
+        const img = new Image();
+        img.onload = function () {
+            var texture = new Texture(gl, img.width, img.height);
+            // The image itself may not have a power of 2 size, so
+            // draw the image in to an appropriately sized canvas.
+            texture.draw(function (context) { context.drawImage(img, 0, 0); });
+            resolve(texture);
+        };
+        img.src = src;
+    });
+}
