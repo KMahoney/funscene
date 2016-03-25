@@ -4,22 +4,31 @@ function nearest_pow2(x : number) {
     return p;
 }
 
+export class Rect {
+    constructor(public x: number, public y: number, public width: number, public height: number) {}
+}
+
+export interface ITexture {
+    texture_id: WebGLTexture;
+    width: number;
+    height: number;
+    texture_coord: Rect;
+}
+
 /**
  * A WebGL Texture
  */
 export class Texture {
     texture_id: WebGLTexture;
-    private texture_width: number;
-    private texture_height: number;
-    texture_scale_x: number;
-    texture_scale_y: number;
+    texture_width: number;
+    texture_height: number;
+    texture_coord: Rect;
 
     constructor(private gl: WebGLRenderingContext, public width: number, public height: number) {
         this.texture_id = gl.createTexture();
         this.texture_width = nearest_pow2(width);
         this.texture_height = nearest_pow2(height);
-        this.texture_scale_x = this.width / this.texture_width;
-        this.texture_scale_y = this.height / this.texture_height;
+        this.texture_coord = new Rect(0.0, 0.0, this.width / this.texture_width, this.height / this.texture_height);
     }
 
     load(canvas: HTMLCanvasElement): void {
@@ -41,6 +50,18 @@ export class Texture {
         const context = canvas.getContext('2d');
         callback(context);
         this.load(canvas);
+    }
+}
+
+export class TextureSlice {
+    texture_id: WebGLTexture;
+    texture_coord: Rect;
+
+    constructor(private texture: Texture, public x: number, public y: number, public width: number, public height: number) {
+        this.texture_id = texture.texture_id;
+        const tw = texture.texture_width;
+        const th = texture.texture_height;
+        this.texture_coord = new Rect(x / tw, y / th, width / tw, height / th);
     }
 }
 

@@ -1,5 +1,5 @@
 import { Context } from './context'
-import { Texture } from './texture'
+import { ITexture } from './texture'
 import { Properties, Transformer } from './transformers'
 
 export interface SceneObject {
@@ -13,7 +13,7 @@ export interface SceneObject {
 export class Sprite {
     length: number;
 
-    constructor(public texture: Texture, public transform: Transformer) {
+    constructor(public texture: ITexture, public transform: Transformer) {
         this.length = this.transform.length;
     }
 
@@ -30,7 +30,8 @@ export class Sprite {
 
         // scale the vertex position and texture coordinates
         gl.uniform2f(program.size, texture.width, texture.height);
-        gl.uniform2f(program.texture_scale, texture.texture_scale_x, texture.texture_scale_y);
+        gl.uniform2f(program.texture_offset, texture.texture_coord.x, texture.texture_coord.y);
+        gl.uniform2f(program.texture_scale, texture.texture_coord.width, texture.texture_coord.height);
 
         context.bindTexture(texture);
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);

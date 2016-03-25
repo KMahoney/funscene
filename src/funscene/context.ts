@@ -1,4 +1,4 @@
-import { Texture, loadTexture } from './texture'
+import { Texture, ITexture, loadTexture } from './texture'
 
 /**
  * The GL shader program used to display 2D sprites.
@@ -11,6 +11,7 @@ export interface Program {
     model: WebGLUniformLocation;
     projection: WebGLUniformLocation;
     size: WebGLUniformLocation;
+    texture_offset: WebGLUniformLocation;
     texture_scale: WebGLUniformLocation;
     sampler: WebGLUniformLocation;
     blend: WebGLUniformLocation;
@@ -43,10 +44,11 @@ function initProgram(gl: WebGLRenderingContext): Program {
           "uniform mat4 model;\n" +
           "uniform mat4 projection;\n" +
           "uniform highp vec2 size;\n" +
+          "uniform highp vec2 texture_offset;\n" +
           "uniform highp vec2 texture_scale;\n" +
           "void main(void) {\n" +
           "  gl_Position = projection * model * vec4(vertex * size, 0, 1);\n" +
-          "  texture_coord = vertex * texture_scale;\n" +
+          "  texture_coord = (vertex * texture_scale) + texture_offset;\n" +
           "}";
     const vert_shader = gl.createShader(gl.VERTEX_SHADER);
     gl.shaderSource(vert_shader, vert);
@@ -63,6 +65,7 @@ function initProgram(gl: WebGLRenderingContext): Program {
         model: gl.getUniformLocation(program, "model"),
         projection: gl.getUniformLocation(program, "projection"),
         size: gl.getUniformLocation(program, "size"),
+        texture_offset: gl.getUniformLocation(program, "texture_offset"),
         texture_scale: gl.getUniformLocation(program, "texture_scale"),
         sampler: gl.getUniformLocation(program, "sampler"),
         blend: gl.getUniformLocation(program, "blend"),
@@ -117,7 +120,7 @@ export class Context {
     program: Program;
 
     // Track currently bound texture to avoid extraneous draw calls
-    private bound_texture: Texture;
+    private bound_texture: WebGLTexture;
 
     // Track the requestAnimationFrame ID so we can stop the animation
     private raf_id: number;
@@ -162,9 +165,9 @@ export class Context {
     /**
      * Bind a texture to the current context.
      */
-    bindTexture(texture: Texture): void {
-        if (texture === this.bound_texture) { return };
-        this.bound_texture = texture;
+    bindTexture(texture: ITexture): void {
+        if (texture.texture_id === this.bound_texture) { return };
+        this.bound_texture = texture.texture_id;
         this.gl.bindTexture(this.gl.TEXTURE_2D, texture.texture_id);
     }
 

@@ -1,19 +1,19 @@
-import { Texture, Sprite, Group, Context, createScene, interpolators, transformers as t } from '../src/funscene'
+import { TextureSlice, Sprite, Group, Context, createScene, interpolators, transformers as t } from '../src/funscene'
 
 const canvas = <HTMLCanvasElement> document.getElementById("stage");
 const context = new Context(canvas);
 context.fullscreen();
 
-// Make a blue square texture by drawing to a canvas context
-const blue_square = context.createTexture(200, 200);
-blue_square.draw(function (context) {
+const texture = context.createTexture(300, 200);
+
+// Draw the texture atlas using a canvas context
+texture.draw(function(context) {
+    // draw blue square
     context.fillStyle = "rgb(80,80,200)";
     context.fillRect(0,0, 200,200);
-});
 
-// Make a happy face texture by drawing to a canvas context
-const happy = context.createTexture(100, 100);
-happy.draw(function (context) {
+    // draw happy face (offset 200, 0)
+    context.translate(200, 0);
     context.strokeStyle = "rgb(200,200,100)";
     context.lineWidth = 5;
     context.beginPath();
@@ -28,8 +28,10 @@ happy.draw(function (context) {
     context.beginPath();
     context.arc(50, 50, 20, 0, Math.PI, false);
     context.stroke();
-});
+})
 
+const blue_square = new TextureSlice(texture, 0, 0, 200, 200);
+const happy = new TextureSlice(texture, 200, 0, 100, 100);
 
 function buildScene(context: Context) {
     // Use the inverse cubic interpolator for all the animations. This
@@ -120,3 +122,5 @@ context.runAnimation(buildScene(context));
 window.addEventListener("contextResize", function () {
     context.runAnimation(buildScene(context));
 });
+
+
