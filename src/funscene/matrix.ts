@@ -4,8 +4,8 @@
 export class Matrix {
     array: Float32Array;
 
-    constructor() {
-        this.array = new Float32Array(16);
+    constructor(array?: Float32Array) {
+        this.array = array || new Float32Array(16);
         this.setIdentity();
     }
 

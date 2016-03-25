@@ -8,13 +8,14 @@ import { Texture, loadTexture } from './texture'
  */
 export interface Program {
     vertex: number;
-    model: WebGLUniformLocation;
+    model: number;
+    blend: number;
+    size: number;
+    texture_offset: number;
+    texture_scale: number;
+
     projection: WebGLUniformLocation;
-    size: WebGLUniformLocation;
-    texture_offset: WebGLUniformLocation;
-    texture_scale: WebGLUniformLocation;
     sampler: WebGLUniformLocation;
-    blend: WebGLUniformLocation;
 };
 
 /**
@@ -29,26 +30,32 @@ export interface DrawCallback {
 function initProgram(gl: WebGLRenderingContext): Program {
     const frag =
           "varying highp vec2 texture_coord;\n" +
+          "varying highp vec4 v_blend;\n" +
           "uniform sampler2D sampler;\n" +
-          "uniform mediump vec4 blend;\n" +
           "void main(void) {\n" +
-          "  gl_FragColor = texture2D(sampler, texture_coord) * blend;\n" +
+          "  gl_FragColor = texture2D(sampler, texture_coord) * v_blend;\n" +
           "}";
     const frag_shader = gl.createShader(gl.FRAGMENT_SHADER);
     gl.shaderSource(frag_shader, frag);
     gl.compileShader(frag_shader);
 
     const vert =
-          "attribute vec2 vertex;\n" +
-          "varying highp vec2 texture_coord;\n" +
-          "uniform mat4 model;\n" +
           "uniform mat4 projection;\n" +
-          "uniform highp vec2 size;\n" +
-          "uniform highp vec2 texture_offset;\n" +
-          "uniform highp vec2 texture_scale;\n" +
+
+          "varying highp vec2 texture_coord;\n" +
+          "varying highp vec4 v_blend;\n" +
+
+          "attribute vec2 vertex;\n" +
+          "attribute mat4 model;\n" +
+          "attribute vec4 blend;\n" +
+          "attribute vec2 size;\n" +
+          "attribute vec2 texture_offset;\n" +
+          "attribute vec2 texture_scale;\n" +
+
           "void main(void) {\n" +
           "  gl_Position = projection * model * vec4(vertex * size, 0, 1);\n" +
           "  texture_coord = (vertex * texture_scale) + texture_offset;\n" +
+          "  v_blend = blend;\n" +
           "}";
     const vert_shader = gl.createShader(gl.VERTEX_SHADER);
     gl.shaderSource(vert_shader, vert);
@@ -62,13 +69,13 @@ function initProgram(gl: WebGLRenderingContext): Program {
 
     return {
         vertex: gl.getAttribLocation(program, "vertex"),
-        model: gl.getUniformLocation(program, "model"),
-        projection: gl.getUniformLocation(program, "projection"),
-        size: gl.getUniformLocation(program, "size"),
-        texture_offset: gl.getUniformLocation(program, "texture_offset"),
-        texture_scale: gl.getUniformLocation(program, "texture_scale"),
+        model: gl.getAttribLocation(program, "model"),
+        blend: gl.getAttribLocation(program, "blend"),
+        size: gl.getAttribLocation(program, "size"),
+        texture_offset: gl.getAttribLocation(program, "texture_offset"),
+        texture_scale: gl.getAttribLocation(program, "texture_scale"),
         sampler: gl.getUniformLocation(program, "sampler"),
-        blend: gl.getUniformLocation(program, "blend"),
+        projection: gl.getUniformLocation(program, "projection"),
     };
 }
 
@@ -106,6 +113,32 @@ function initGL(gl: WebGLRenderingContext, program: Program): void {
     gl.uniform1i(program.sampler, 0);
 }
 
+function initSpriteBuffer(gl: WebGLRenderingContext, instanced_arrays: any, program: Program): WebGLBuffer {
+    const buffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+
+    const stride = 26;
+    const byte_stride = stride * 4;
+    const blend_offset = 16 * 4;
+    const size_offset = 20 * 4;
+    const texture_xy_offset = 22 * 4;
+    const texture_scale_offset = 24 * 4;
+
+    function repeated_attrib(attrib: number, offset: number, length: number) {
+        gl.enableVertexAttribArray(attrib);
+        gl.vertexAttribPointer(attrib, length, gl.FLOAT, false, byte_stride, offset);
+        instanced_arrays.vertexAttribDivisorANGLE(attrib, 1);
+    }
+
+    for (var i = 0; i < 4; i++) { repeated_attrib(program.model + i, 4 * 4 * i, 4); }
+    repeated_attrib(program.blend, blend_offset, 4);
+    repeated_attrib(program.size, size_offset, 2);
+    repeated_attrib(program.texture_offset, texture_xy_offset, 2);
+    repeated_attrib(program.texture_scale, texture_scale_offset, 2);
+
+    return buffer;
+}
+
 /**
  * A wrapper around the the WebGL context.
  *
@@ -117,7 +150,9 @@ function initGL(gl: WebGLRenderingContext, program: Program): void {
  */
 export class Context {
     gl: WebGLRenderingContext;
+    instanced_arrays: any;
     program: Program;
+    sprite_buffer: WebGLBuffer;
 
     // Track the requestAnimationFrame ID so we can stop the animation
     private raf_id: number;
@@ -135,6 +170,8 @@ export class Context {
         this.gl = canvas.getContext("experimental-webgl");
         this.program = initProgram(this.gl);
         initGL(this.gl, this.program);
+        this.instanced_arrays = this.gl.getExtension("ANGLE_instanced_arrays");
+        this.sprite_buffer = initSpriteBuffer(this.gl, this.instanced_arrays, this.program);
         this.raf_id = null;
     }
 

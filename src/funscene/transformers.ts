@@ -1,4 +1,5 @@
 import { Matrix } from './matrix'
+import { Rect } from './texture'
 
 /**
  * A mutable set of properties for objects in a scene.
@@ -7,9 +8,28 @@ export class Properties {
     matrix: Matrix;
     blend: Float32Array;
 
-    constructor() {
-        this.matrix = new Matrix();
-        this.blend = new Float32Array([1, 1, 1, 1]);
+    constructor(buffer: ArrayBuffer, i: number, width: number, height: number, texture_coord: Rect) {
+        const stride = 26;
+        const byte_stride = stride * 4;
+        const offset = byte_stride * i;
+        const matrix_offset = 0;
+        const blend_offset = 16 * 4;
+        const size_offset = 20 * 4;
+        const texture_xy_offset = 22 * 4;
+        const texture_scale_offset = 24 * 4;
+
+        this.matrix = new Matrix(new Float32Array(buffer, offset + matrix_offset, 16));
+        this.blend = new Float32Array(buffer, offset + blend_offset, 4);
+        var size = new Float32Array(buffer, offset + size_offset, 2);
+        var texture_xy = new Float32Array(buffer, offset + texture_xy_offset, 2);
+        var texture_scale = new Float32Array(buffer, offset + texture_scale_offset, 2);
+
+        size[0] = width;
+        size[1] = height;
+        texture_xy[0] = texture_coord.x;
+        texture_xy[1] = texture_coord.y;
+        texture_scale[0] = texture_coord.width;
+        texture_scale[1] = texture_coord.height;
     }
 
     reset(): void {

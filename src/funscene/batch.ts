@@ -2,52 +2,56 @@ import { Context } from './context'
 import { ITexture, Rect } from './texture'
 import { Properties, Transformer } from './transformers'
 
+export type SpriteConstants = {
+    transformers: Transformer[],
+    width: number,
+    height: number,
+    texture_coord: Rect
+}
+
 export class BatchSprite {
     constructor(
         private properties: Properties,
-        private transformers: Transformer[],
-        private width: number,
-        private height: number,
-        private texture_coord: Rect
+        private constants: SpriteConstants
     ) {}
 
     update(t: number): void {
         var properties = this.properties;
         properties.reset();
-        this.transformers.forEach(function (transformer) {
+        this.constants.transformers.forEach(function (transformer) {
             transformer.updateProperties(t, properties);
         });
     }
 
-    draw(context: Context): void {
-        const gl = context.gl;
-        const program = context.program;
-
-        // send the updated model and blend to webgl
-        gl.uniform4fv(program.blend, this.properties.blend);
-        gl.uniformMatrix4fv(program.model, false, this.properties.matrix.array);
-
-        // scale the vertex position and texture coordinates
-        gl.uniform2f(program.size, this.width, this.height);
-        gl.uniform2f(program.texture_offset, this.texture_coord.x, this.texture_coord.y);
-        gl.uniform2f(program.texture_scale, this.texture_coord.width, this.texture_coord.height);
-
-        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-    }
-
     length(): number {
-        return Math.max.apply(undefined, this.transformers.map(t => t.length));
+        return Math.max.apply(undefined, this.constants.transformers.map(t => t.length));
     }
 }
 
 export class Batch {
     public length: number;
+    private buffer: Float32Array;
+    private sprites: BatchSprite[];
 
     constructor(
         private texture_id: WebGLTexture,
-        private sprites: BatchSprite[]
+        sprites: SpriteConstants[]
     ) {
-        this.length = Math.max.apply(undefined, sprites.map(s => s.length()));
+        const stride = 26;
+        const byte_stride = stride * 4;
+
+        var buffer = new ArrayBuffer(byte_stride * sprites.length);
+
+        this.sprites = [];
+        for (var i = 0; i < sprites.length; i++) {
+            const constants = sprites[i];
+            const properties = new Properties(buffer, i, constants.width, constants.height, constants.texture_coord);
+            this.sprites.push(new BatchSprite(properties, constants));
+        }
+
+        this.buffer = new Float32Array(buffer);
+
+        this.length = Math.max.apply(undefined, this.sprites.map(s => s.length()));
     }
 
     update(t: number): void {
@@ -55,15 +59,19 @@ export class Batch {
     }
 
     draw(context: Context): void {
-        context.gl.bindTexture(context.gl.TEXTURE_2D, this.texture_id);
-        this.sprites.forEach(function (sprite) { sprite.draw(context); });
+        const gl = context.gl;
+        const program = context.program;
+        gl.bindTexture(gl.TEXTURE_2D, this.texture_id);
+        gl.bindBuffer(gl.ARRAY_BUFFER, context.sprite_buffer);
+        gl.bufferData(gl.ARRAY_BUFFER, this.buffer, gl.DYNAMIC_DRAW);
+        context.instanced_arrays.drawArraysInstancedANGLE(gl.TRIANGLE_STRIP, 0, 4, this.sprites.length);
     }
 }
 
 export class BatchBuilder {
     private transformer_stack: Transformer[];
     private current_texture_id: WebGLTexture;
-    private sprites: BatchSprite[];
+    private sprites: SpriteConstants[];
     public batches: Batch[];
 
     constructor() {
@@ -87,10 +95,14 @@ export class BatchBuilder {
             this.current_texture_id = texture.texture_id;
         }
 
-        const properties = new Properties();
         var transformers = this.transformer_stack.slice();
         transformers.push(transformer);
-        this.sprites.push(new BatchSprite(properties, transformers, texture.width, texture.height, texture.texture_coord));
+        this.sprites.push({
+            transformers: transformers,
+            width: texture.width,
+            height: texture.height,
+            texture_coord: texture.texture_coord
+        });
     }
 
     pushTransformer(transformer: Transformer): void {
