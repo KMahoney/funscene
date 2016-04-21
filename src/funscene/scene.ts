@@ -1,7 +1,7 @@
 import { Context, DrawCallback } from './context'
 import { Properties, Transformer } from './transformers'
 import { Sprite, Group, SceneObject } from './sprite'
-import { Matrix } from './matrix'
+import { Matrix4 } from './matrix'
 import { Batch, BatchBuilder } from './batch'
 
 /**
@@ -15,7 +15,7 @@ export function createScene(objects: SceneObject[]): DrawCallback {
     builder.finishBatch();
     const batches = builder.batches;
 
-    var projection_matrix = new Matrix();
+    var projection_matrix = new Matrix4();
 
     return function(context, t) {
         const gl = context.gl;

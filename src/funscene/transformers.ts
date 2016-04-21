@@ -1,24 +1,24 @@
-import { Matrix } from './matrix'
+import { Matrix3 } from './matrix'
 import { Rect } from './texture'
 
 /**
  * A mutable set of properties for objects in a scene.
  */
 export class Properties {
-    matrix: Matrix;
+    matrix: Matrix3;
     blend: Float32Array;
 
     constructor(buffer: ArrayBuffer, i: number, width: number, height: number, texture_coord: Rect) {
-        const stride = 26;
+        const stride = 19;
         const byte_stride = stride * 4;
         const offset = byte_stride * i;
         const matrix_offset = 0;
-        const blend_offset = 16 * 4;
-        const size_offset = 20 * 4;
-        const texture_xy_offset = 22 * 4;
-        const texture_scale_offset = 24 * 4;
+        const blend_offset = 9 * 4;
+        const size_offset = 13 * 4;
+        const texture_xy_offset = 15 * 4;
+        const texture_scale_offset = 17 * 4;
 
-        this.matrix = new Matrix(new Float32Array(buffer, offset + matrix_offset, 16));
+        this.matrix = new Matrix3(new Float32Array(buffer, offset + matrix_offset, 9));
         this.blend = new Float32Array(buffer, offset + blend_offset, 4);
         var size = new Float32Array(buffer, offset + size_offset, 2);
         var texture_xy = new Float32Array(buffer, offset + texture_xy_offset, 2);
@@ -85,7 +85,7 @@ export namespace transformers {
         return {
             length: null,
             updateProperties: function(t, prop) {
-                prop.matrix.translate(x, y, 0);
+                prop.matrix.translate(x, y);
             }
         };
     }
@@ -139,7 +139,7 @@ export namespace transformers {
                 const t2 = t/length;
                 const x = interpolator(t2, x1, x2);
                 const y = interpolator(t2, y1, y2);
-                prop.matrix.translate(x, y, 0);
+                prop.matrix.translate(x, y);
             }
         };
     }
@@ -152,7 +152,7 @@ export namespace transformers {
             length: length,
             updateProperties: function(t, prop) {
                 const rad = interpolator(t/length, from, to) * Math.PI * 2;
-                prop.matrix.rotateZ(rad);
+                prop.matrix.rotate(rad);
             }
         };
     }

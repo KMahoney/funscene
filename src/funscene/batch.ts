@@ -37,7 +37,7 @@ export class Batch {
         private texture_id: WebGLTexture,
         sprites: SpriteConstants[]
     ) {
-        const stride = 26;
+        const stride = 19;
         const byte_stride = stride * 4;
 
         var buffer = new ArrayBuffer(byte_stride * sprites.length);

@@ -46,14 +46,14 @@ function initProgram(gl: WebGLRenderingContext): Program {
           "varying highp vec4 v_blend;\n" +
 
           "attribute vec2 vertex;\n" +
-          "attribute mat4 model;\n" +
+          "attribute mat3 model;\n" +
           "attribute vec4 blend;\n" +
           "attribute vec2 size;\n" +
           "attribute vec2 texture_offset;\n" +
           "attribute vec2 texture_scale;\n" +
 
           "void main(void) {\n" +
-          "  gl_Position = projection * model * vec4(vertex * size, 0, 1);\n" +
+          "  gl_Position = projection * vec4((model * vec3(vertex * size, 1)).xy, 0, 1);\n" +
           "  texture_coord = (vertex * texture_scale) + texture_offset;\n" +
           "  v_blend = blend;\n" +
           "}";
@@ -117,12 +117,13 @@ function initSpriteBuffer(gl: WebGLRenderingContext, instanced_arrays: any, prog
     const buffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
 
-    const stride = 26;
+    const stride = 19;
     const byte_stride = stride * 4;
-    const blend_offset = 16 * 4;
-    const size_offset = 20 * 4;
-    const texture_xy_offset = 22 * 4;
-    const texture_scale_offset = 24 * 4;
+    const offset = byte_stride * i;
+    const blend_offset = 9 * 4;
+    const size_offset = 13 * 4;
+    const texture_xy_offset = 15 * 4;
+    const texture_scale_offset = 17 * 4;
 
     function repeated_attrib(attrib: number, offset: number, length: number) {
         gl.enableVertexAttribArray(attrib);
@@ -130,7 +131,7 @@ function initSpriteBuffer(gl: WebGLRenderingContext, instanced_arrays: any, prog
         instanced_arrays.vertexAttribDivisorANGLE(attrib, 1);
     }
 
-    for (var i = 0; i < 4; i++) { repeated_attrib(program.model + i, 4 * 4 * i, 4); }
+    for (var i = 0; i < 3; i++) { repeated_attrib(program.model + i, 3 * 4 * i, 3); }
     repeated_attrib(program.blend, blend_offset, 4);
     repeated_attrib(program.size, size_offset, 2);
     repeated_attrib(program.texture_offset, texture_xy_offset, 2);
