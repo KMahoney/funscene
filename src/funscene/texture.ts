@@ -10,8 +10,12 @@ export class Rect {
 
 export interface ITexture {
     texture_id: WebGLTexture;
+
+    // integer width and height of texture in pixels
     width: number;
     height: number;
+
+    // texture UV coordinates in range [0,1]
     texture_coord: Rect;
 }
 

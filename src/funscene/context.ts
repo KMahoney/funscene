@@ -1,4 +1,4 @@
-import { Texture, ITexture, loadTexture } from './texture'
+import { Texture, loadTexture } from './texture'
 
 /**
  * The GL shader program used to display 2D sprites.
@@ -119,9 +119,6 @@ export class Context {
     gl: WebGLRenderingContext;
     program: Program;
 
-    // Track currently bound texture to avoid extraneous draw calls
-    private bound_texture: WebGLTexture;
-
     // Track the requestAnimationFrame ID so we can stop the animation
     private raf_id: number;
 
@@ -160,15 +157,6 @@ export class Context {
      */
     loadTextures(srcs: [string]): Promise<[Texture]> {
         return Promise.all(srcs.map(src => loadTexture(this.gl, src)));
-    }
-
-    /**
-     * Bind a texture to the current context.
-     */
-    bindTexture(texture: ITexture): void {
-        if (texture.texture_id === this.bound_texture) { return };
-        this.bound_texture = texture.texture_id;
-        this.gl.bindTexture(this.gl.TEXTURE_2D, texture.texture_id);
     }
 
     /**
