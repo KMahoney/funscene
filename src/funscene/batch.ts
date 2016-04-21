@@ -13,10 +13,7 @@ export class BatchSprite {
     public length: number;
     private complete: boolean;
 
-    constructor(
-        private properties: Properties,
-        private transformers: Transformer[]
-    ) {
+    constructor(private properties: Properties, private transformers: Transformer[]) {
         this.length = Math.max.apply(undefined, transformers.map(t => t.length));
         this.complete = false;
     }
@@ -39,10 +36,7 @@ export class Batch {
     private sprites: BatchSprite[];
     private complete: boolean;
 
-    constructor(
-        private texture_id: WebGLTexture,
-        sprites: SpriteConstants[]
-    ) {
+    constructor(private texture_id: WebGLTexture, sprites: SpriteConstants[]) {
         const stride = 19;
         const byte_stride = stride * 4;
 
