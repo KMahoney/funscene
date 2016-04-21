@@ -10,21 +10,26 @@ export type SpriteConstants = {
 }
 
 export class BatchSprite {
+    public length: number;
+    private complete: boolean;
+
     constructor(
         private properties: Properties,
-        private constants: SpriteConstants
-    ) {}
-
-    update(t: number): void {
-        var properties = this.properties;
-        properties.reset();
-        this.constants.transformers.forEach(function (transformer) {
-            transformer.updateProperties(t, properties);
-        });
+        private transformers: Transformer[]
+    ) {
+        this.length = Math.max.apply(undefined, transformers.map(t => t.length));
+        this.complete = false;
     }
 
-    length(): number {
-        return Math.max.apply(undefined, this.constants.transformers.map(t => t.length));
+    update(t: number): void {
+        if (!this.complete) {
+            var properties = this.properties;
+            properties.reset();
+            this.transformers.forEach(function (transformer) {
+                transformer.updateProperties(t, properties);
+            });
+            this.complete = t > this.length;
+        }
     }
 }
 
@@ -32,6 +37,7 @@ export class Batch {
     public length: number;
     private buffer: Float32Array;
     private sprites: BatchSprite[];
+    private complete: boolean;
 
     constructor(
         private texture_id: WebGLTexture,
@@ -46,16 +52,20 @@ export class Batch {
         for (var i = 0; i < sprites.length; i++) {
             const constants = sprites[i];
             const properties = new Properties(buffer, i, constants.width, constants.height, constants.texture_coord);
-            this.sprites.push(new BatchSprite(properties, constants));
+            this.sprites.push(new BatchSprite(properties, constants.transformers));
         }
 
         this.buffer = new Float32Array(buffer);
 
-        this.length = Math.max.apply(undefined, this.sprites.map(s => s.length()));
+        this.length = Math.max.apply(undefined, this.sprites.map(s => s.length));
+        this.complete = false;
     }
 
     update(t: number): void {
-        this.sprites.forEach(function (sprite) { sprite.update(t); });
+        if (!this.complete) {
+            this.sprites.forEach(function (sprite) { sprite.update(t); });
+            this.complete = t > this.length;
+        }
     }
 
     draw(context: Context): void {

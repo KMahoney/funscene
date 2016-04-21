@@ -14,6 +14,7 @@ export function createScene(objects: SceneObject[]): DrawCallback {
     objects.forEach(function (object) { object.build(builder); });
     builder.finishBatch();
     const batches = builder.batches;
+    const length = Math.max.apply(undefined, batches.map(b => b.length));
 
     var projection_matrix = new Matrix4();
 
@@ -22,10 +23,8 @@ export function createScene(objects: SceneObject[]): DrawCallback {
         const program = context.program;
 
         const scene_t = Math.max(t - start, 0);
-        var incomplete = false;
         batches.forEach(function (batch) {
             batch.update(scene_t);
-            incomplete = incomplete || (scene_t < batch.length);
         });
 
         gl.clear(gl.COLOR_BUFFER_BIT);
@@ -35,6 +34,6 @@ export function createScene(objects: SceneObject[]): DrawCallback {
 
         batches.forEach(function (batch) { batch.draw(context); });
 
-        return incomplete;
+        return scene_t < length;
     };
 }
