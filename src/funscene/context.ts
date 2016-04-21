@@ -29,8 +29,9 @@ export interface DrawCallback {
 
 function initProgram(gl: WebGLRenderingContext): Program {
     const frag =
-          "varying highp vec2 texture_coord;\n" +
-          "varying highp vec4 v_blend;\n" +
+          "precision lowp float;\n" +
+          "varying vec2 texture_coord;\n" +
+          "varying vec4 v_blend;\n" +
           "uniform sampler2D sampler;\n" +
           "void main(void) {\n" +
           "  gl_FragColor = texture2D(sampler, texture_coord) * v_blend;\n" +
@@ -40,10 +41,11 @@ function initProgram(gl: WebGLRenderingContext): Program {
     gl.compileShader(frag_shader);
 
     const vert =
+          "precision lowp float;\n" +
           "uniform mat4 projection;\n" +
 
-          "varying highp vec2 texture_coord;\n" +
-          "varying highp vec4 v_blend;\n" +
+          "varying vec2 texture_coord;\n" +
+          "varying vec4 v_blend;\n" +
 
           "attribute vec2 vertex;\n" +
           "attribute mat3 model;\n" +
