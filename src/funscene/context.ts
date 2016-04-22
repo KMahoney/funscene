@@ -115,29 +115,35 @@ function initGL(gl: WebGLRenderingContext, program: Program): void {
     gl.uniform1i(program.sampler, 0);
 }
 
+/**
+ * Offsets for the instanced sprite buffer
+ */
+export const BUFFER_CONSTS = {
+    matrix_offset: 0,
+    blend_offset: 9 * 4,
+    size_offset: 13 * 4,
+    texture_xy_offset: 15 * 4,
+    texture_scale_offset: 17 * 4,
+    stride: 19 * 4,
+}
+
 function initSpriteBuffer(gl: WebGLRenderingContext, instanced_arrays: any, program: Program): WebGLBuffer {
     const buffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
 
-    const stride = 19;
-    const byte_stride = stride * 4;
-    const offset = byte_stride * i;
-    const blend_offset = 9 * 4;
-    const size_offset = 13 * 4;
-    const texture_xy_offset = 15 * 4;
-    const texture_scale_offset = 17 * 4;
-
+    const C = BUFFER_CONSTS;
     function repeated_attrib(attrib: number, offset: number, length: number) {
         gl.enableVertexAttribArray(attrib);
-        gl.vertexAttribPointer(attrib, length, gl.FLOAT, false, byte_stride, offset);
+        gl.vertexAttribPointer(attrib, length, gl.FLOAT, false, C.stride, offset);
         instanced_arrays.vertexAttribDivisorANGLE(attrib, 1);
     }
 
     for (var i = 0; i < 3; i++) { repeated_attrib(program.model + i, 3 * 4 * i, 3); }
-    repeated_attrib(program.blend, blend_offset, 4);
-    repeated_attrib(program.size, size_offset, 2);
-    repeated_attrib(program.texture_offset, texture_xy_offset, 2);
-    repeated_attrib(program.texture_scale, texture_scale_offset, 2);
+
+    repeated_attrib(program.blend, C.blend_offset, 4);
+    repeated_attrib(program.size, C.size_offset, 2);
+    repeated_attrib(program.texture_offset, C.texture_xy_offset, 2);
+    repeated_attrib(program.texture_scale, C.texture_scale_offset, 2);
 
     return buffer;
 }

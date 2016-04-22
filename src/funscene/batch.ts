@@ -1,4 +1,4 @@
-import { Context } from './context'
+import { Context, BUFFER_CONSTS } from './context'
 import { ITexture, Rect } from './texture'
 import { Properties, Transformer } from './transformers'
 
@@ -37,10 +37,7 @@ export class Batch {
     private complete: boolean;
 
     constructor(private texture_id: WebGLTexture, sprites: SpriteConstants[]) {
-        const stride = 19;
-        const byte_stride = stride * 4;
-
-        var buffer = new ArrayBuffer(byte_stride * sprites.length);
+        var buffer = new ArrayBuffer(BUFFER_CONSTS.stride * sprites.length);
 
         this.sprites = [];
         for (var i = 0; i < sprites.length; i++) {
